@@ -41,9 +41,29 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
     ) internal virtual returns (uint amountA, uint amountB) {
         // create the pair if it doesn't exist yet
         if (IUniswapV2Factory(factory).getPair(tokenA, tokenB) == address(0)) {
-            uint deadlineA = IOptionToken(tokenA).expirationBlockNumber();
-            uint deadlineB = IOptionToken(tokenB).expirationBlockNumber();
-            uint deadline = deadlineA > deadlineB ? deadlineA : deadlineB;
+            
+            uint deadlineA;
+            uint deadlineB;
+            uint deadline;
+
+            try IOptionToken(tokenA).expirationBlockNumber() returns (uint d) {
+                deadlineA = d;
+            } catch (bytes memory) {
+                deadlineA = 0;
+            }
+
+            try IOptionToken(tokenB).expirationBlockNumber() returns (uint d) {
+                deadlineB = d;
+            } catch (bytes memory) {
+                deadlineB = 0;
+            }
+
+            if (deadlineA == 0 && deadlineB == 0) {
+                deadline =  2 ** 256 - 1;
+            } else {
+                deadline = deadlineA > deadlineB ? deadlineA : deadlineB;
+            }
+            
             IUniswapV2Factory(factory).createPair(tokenA, tokenB, deadline);
         }
         (uint reserveA, uint reserveB) = UniswapV2Library.getReserves(factory, tokenA, tokenB);

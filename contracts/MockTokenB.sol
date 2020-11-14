@@ -9,16 +9,16 @@ contract MockTokenB {
     string public constant symbol = 'MT';
     uint8 public constant decimals = 18;
     uint  public totalSupply;
-    uint public expirationBlockNumber;
+    // uint public expirationBlockNumber;
     mapping(address => uint) public balanceOf;
     mapping(address => mapping(address => uint)) public allowance;
 
     event Approval(address indexed owner, address indexed spender, uint value);
     event Transfer(address indexed from, address indexed to, uint value);
 
-    function setExpirationBlockNumber(uint _expirationBlockNumber) public {
-        expirationBlockNumber = _expirationBlockNumber;
-    }
+    // function setExpirationBlockNumber(uint _expirationBlockNumber) public {
+    //     expirationBlockNumber = _expirationBlockNumber;
+    // }
     
     function _mint(address to, uint value) internal {
         totalSupply = totalSupply.add(value);
